@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RepoBrief — Instant Codebase Context for AI Agents</title>
+<meta name="description" content="Give any AI coding agent instant understanding of your codebase. Auto-generates context maps for Claude Code, Cursor, Codex, and more.">
+<meta property="og:title" content="RepoBrief — Instant Codebase Context for AI Agents">
+<meta property="og:description" content="One command. Your AI agent understands your entire codebase.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://repobrief.dev">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RepoBrief">
+<meta name="twitter:description" content="Give any AI coding agent instant understanding of your codebase.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#222;
+  --text:#e5e5e5;--text2:#999;--text3:#666;
+  --accent:#3b82f6;--accent2:#60a5fa;
+  --green:#22c55e;--yellow:#eab308;
+  --border:#222;--border2:#333;
+  --radius:12px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:var(--accent2);text-decoration:none;transition:color .2s}
+a:hover{color:#93c5fd}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(10,10,10,.8);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:700;font-size:18px;color:#fff;letter-spacing:-.02em}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--text2);font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:#fff;color:#000;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;transition:all .2s}
+.nav-cta:hover{background:#e5e5e5;color:#000}
+
+/* Hero */
+.hero{padding:160px 24px 100px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(59,130,246,.08) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:100px;border:1px solid var(--border2);background:var(--bg2);font-size:13px;color:var(--text2);margin-bottom:32px}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{font-size:clamp(40px,6vw,72px);font-weight:800;line-height:1.05;letter-spacing:-.04em;color:#fff;max-width:800px;margin:0 auto 24px}
+h1 .gradient{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 50%,#93c5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--text2);max-width:560px;margin:0 auto 48px;line-height:1.6}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.btn-primary{background:#fff;color:#000;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:600;transition:all .2s;border:none;cursor:pointer}
+.btn-primary:hover{background:#e5e5e5;transform:translateY(-1px);color:#000}
+.btn-secondary{background:transparent;color:var(--text);padding:14px 32px;border-radius:10px;font-size:16px;font-weight:500;border:1px solid var(--border2);transition:all .2s;cursor:pointer}
+.btn-secondary:hover{border-color:var(--text3);background:var(--bg2)}
+
+/* Terminal */
+.terminal{max-width:720px;margin:0 auto;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;text-align:left;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.terminal-header{display:flex;align-items:center;gap:8px;padding:14px 18px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.terminal-dot{width:12px;height:12px;border-radius:50%}
+.terminal-dot.r{background:#ff5f57}.terminal-dot.y{background:#febc2e}.terminal-dot.g{background:#28c840}
+.terminal-body{padding:24px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.8;overflow-x:auto}
+.terminal-body .prompt{color:var(--text3)}
+.terminal-body .cmd{color:#fff;font-weight:500}
+.terminal-body .output{color:var(--text2)}
+.terminal-body .success{color:var(--green)}
+.terminal-body .accent{color:var(--accent2)}
+.terminal-body .dim{color:var(--text3)}
+
+/* Sections */
+section{padding:120px 24px}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:16px}
+.section-title{font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-.03em;color:#fff;margin-bottom:16px;line-height:1.15}
+.section-desc{font-size:18px;color:var(--text2);max-width:600px;margin-bottom:56px;line-height:1.6}
+
+/* Problem/Solution */
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.problem-card,.solution-card{padding:32px;border-radius:var(--radius);border:1px solid var(--border)}
+.problem-card{background:var(--bg2)}
+.solution-card{background:linear-gradient(135deg,rgba(59,130,246,.05),rgba(59,130,246,.02));border-color:rgba(59,130,246,.2)}
+.card-icon{font-size:28px;margin-bottom:16px}
+.card-title{font-size:18px;font-weight:600;color:#fff;margin-bottom:8px}
+.card-text{font-size:15px;color:var(--text2);line-height:1.6}
+
+/* Features */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature{padding:32px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg2);transition:all .3s}
+.feature:hover{border-color:var(--border2);background:var(--bg3);transform:translateY(-2px)}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:20px}
+.feature h3{font-size:16px;font-weight:600;color:#fff;margin-bottom:8px}
+.feature p{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* Export formats */
+.formats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+.format{padding:24px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg2);text-align:center;transition:all .3s}
+.format:hover{border-color:var(--accent);background:var(--bg3)}
+.format-name{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:#fff;margin-bottom:6px}
+.format-desc{font-size:13px;color:var(--text3)}
+.format-arrow{font-size:13px;color:var(--accent);margin-top:8px;font-family:'JetBrains Mono',monospace}
+
+/* How it works */
+.steps{display:grid;gap:0;position:relative;max-width:640px}
+.step{display:grid;grid-template-columns:48px 1fr;gap:20px;padding-bottom:40px;position:relative}
+.step:last-child{padding-bottom:0}
+.step-num{width:48px;height:48px;border-radius:12px;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--accent);position:relative;z-index:1}
+.step:not(:last-child) .step-num::after{content:'';position:absolute;top:48px;left:50%;width:1px;height:calc(100% + 40px - 48px);background:var(--border);transform:translateX(-50%)}
+.step h3{font-size:16px;font-weight:600;color:#fff;margin-bottom:4px;padding-top:2px}
+.step p{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* CTA */
+.cta-section{text-align:center;padding:120px 24px;position:relative}
+.cta-section::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(59,130,246,.06) 0%,transparent 70%);pointer-events:none}
+.cta-install{display:inline-flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:16px 28px;margin-top:32px;cursor:pointer;transition:all .2s}
+.cta-install:hover{border-color:var(--text3);background:var(--bg3)}
+.cta-install code{font-family:'JetBrains Mono',monospace;font-size:16px;color:#fff}
+.cta-install .copy{font-size:13px;color:var(--text3);padding-left:16px;border-left:1px solid var(--border)}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:40px 24px;text-align:center}
+footer p{font-size:14px;color:var(--text3)}
+footer a{color:var(--text2)}
+
+/* Social proof placeholder */
+.social-proof{display:flex;gap:32px;justify-content:center;margin-top:80px;flex-wrap:wrap}
+.proof-item{font-size:14px;color:var(--text3);display:flex;align-items:center;gap:8px}
+.proof-item strong{color:var(--text2)}
+
+/* Responsive */
+@media(max-width:768px){
+  .problem-grid,.features-grid{grid-template-columns:1fr}
+  .formats{grid-template-columns:repeat(2,1fr)}
+  .nav-links a:not(.nav-cta){display:none}
+  .hero{padding:120px 20px 80px}
+  section{padding:80px 20px}
+}
+@media(max-width:480px){
+  .formats{grid-template-columns:1fr}
+  .hero-actions{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">Repo<span>Brief</span></div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="https://github.com/joeynyc/repobrief">GitHub</a>
+      <a href="https://www.npmjs.com/package/repobrief" class="nav-cta">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    v0.1 — Now available on npm
+  </div>
+  <h1>Your AI agent should <span class="gradient">already know</span> your codebase</h1>
+  <p class="hero-sub">One command generates a complete context briefing for Claude Code, Cursor, Codex, or any AI coding tool. Stop wasting tokens on rediscovery.</p>
+  <div class="hero-actions">
+    <a href="https://www.npmjs.com/package/repobrief" class="btn-primary">Get Started →</a>
+    <a href="https://github.com/joeynyc/repobrief" class="btn-secondary">View on GitHub</a>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="terminal-dot r"></div>
+      <div class="terminal-dot y"></div>
+      <div class="terminal-dot g"></div>
+    </div>
+    <div class="terminal-body">
+      <div><span class="prompt">~/my-project $</span> <span class="cmd">npx repobrief init</span></div>
+      <br>
+      <div><span class="success">✓</span> <span class="output">Analyzed 201 files across 63 directories.</span></div>
+      <div><span class="output">&nbsp; Found: <span class="accent">TypeScript/Next.js</span> project with 47 deps, 312 commits.</span></div>
+      <div><span class="success">✓</span> <span class="output">RepoBrief initialized at .repobrief/</span></div>
+      <br>
+      <div><span class="prompt">~/my-project $</span> <span class="cmd">npx repobrief export --format claude</span></div>
+      <div><span class="success">✓</span> <span class="output">Export completed: CLAUDE.md</span></div>
+      <br>
+      <div><span class="dim">Your AI agent is briefed. Zero tokens wasted.</span></div>
+    </div>
+  </div>
+
+  <div class="social-proof">
+    <div class="proof-item">🔧 <strong>5 languages</strong> supported</div>
+    <div class="proof-item">📦 <strong>4 export</strong> formats</div>
+    <div class="proof-item">⚡ <strong>< 5 seconds</strong> to analyze</div>
+  </div>
+</section>
+
+<!-- Problem / Solution -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-label">The Problem</div>
+    <div class="section-title">AI agents are flying blind</div>
+    <div class="section-desc">Every session starts from zero. Your agent wastes time and tokens re-reading files, guessing at architecture, and missing your conventions.</div>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="card-icon">🔥</div>
+        <div class="card-title">Token burn</div>
+        <div class="card-text">AI tools ingest your entire codebase every session. On large projects, that's thousands of wasted tokens before they write a single line.</div>
+      </div>
+      <div class="problem-card">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">Context loss</div>
+        <div class="card-text">No memory between sessions. Your agent doesn't know your naming conventions, architecture decisions, or where the important code lives.</div>
+      </div>
+      <div class="solution-card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">RepoBrief: Structured context</div>
+        <div class="card-text">Auto-generated architecture maps, coding patterns, dependency analysis, and git history — ready for any AI tool in seconds.</div>
+      </div>
+      <div class="solution-card">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">Always current</div>
+        <div class="card-text">Run <code>repobrief update</code> and your context stays fresh. Fast enough to hook into every commit.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-label">Features</div>
+    <div class="section-title">Everything your AI agent needs to know</div>
+    <div class="section-desc">RepoBrief analyzes your actual code, git history, and project structure — not templates or guesses.</div>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">🏗️</div>
+        <h3>Architecture Detection</h3>
+        <p>Identifies project type, framework, build system, entry points, and key directories automatically.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📐</div>
+        <h3>Pattern Recognition</h3>
+        <p>Detects naming conventions, import styles, error handling patterns, testing frameworks, and linter configs from your actual code.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <h3>Git Intelligence</h3>
+        <p>Analyzes commit history to surface high-churn files, active areas, and where bugs tend to cluster.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📦</div>
+        <h3>Dependency Mapping</h3>
+        <p>Parses manifest files across languages. Categorizes runtime vs dev dependencies with context.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔌</div>
+        <h3>Universal Export</h3>
+        <p>One analysis, multiple formats. Export to Claude Code, Cursor, Codex, or universal markdown.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌐</div>
+        <h3>Multi-Language</h3>
+        <p>JavaScript, TypeScript, Python, Swift, Rust, Go — detected automatically by manifest files.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Export Formats -->
+<section>
+  <div class="section-inner" style="text-align:center">
+    <div class="section-label">Export Formats</div>
+    <div class="section-title" style="max-width:600px;margin:0 auto 16px">One scan. Every tool.</div>
+    <div class="section-desc" style="margin:0 auto 48px">Generate context files optimized for how each AI tool consumes project information.</div>
+    <div class="formats">
+      <div class="format">
+        <div class="format-name">Claude Code</div>
+        <div class="format-desc">Project instructions</div>
+        <div class="format-arrow">→ CLAUDE.md</div>
+      </div>
+      <div class="format">
+        <div class="format-name">Cursor</div>
+        <div class="format-desc">Editor rules</div>
+        <div class="format-arrow">→ .cursorrules</div>
+      </div>
+      <div class="format">
+        <div class="format-name">Codex</div>
+        <div class="format-desc">Agent context</div>
+        <div class="format-arrow">→ AGENTS.md</div>
+      </div>
+      <div class="format">
+        <div class="format-name">Markdown</div>
+        <div class="format-desc">Universal</div>
+        <div class="format-arrow">→ README-context.md</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works">
+  <div class="section-inner">
+    <div class="section-label">How It Works</div>
+    <div class="section-title">Three commands. That's it.</div>
+    <div class="section-desc">No config files. No setup. No API keys.</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Initialize</h3>
+          <p>Run <code>npx repobrief init</code> in any git repo. RepoBrief scans your code, dependencies, git history, and project structure in seconds.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Export</h3>
+          <p>Run <code>repobrief export --format claude</code> to generate optimized context for your AI tool of choice. Supports Claude, Cursor, Codex, and markdown.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Stay current</h3>
+          <p>Run <code>repobrief update</code> after major changes. Your context evolves with your code — not a stale doc that was accurate three months ago.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-label">Get Started</div>
+  <div class="section-title" style="max-width:600px;margin:0 auto 16px">Stop briefing your AI by hand</div>
+  <p style="font-size:18px;color:var(--text2);max-width:480px;margin:0 auto">One command. Instant context. Better AI output. Open source and free.</p>
+  <div class="cta-install" onclick="navigator.clipboard.writeText('npx repobrief init');this.querySelector('.copy').textContent='Copied!'">
+    <code>npx repobrief init</code>
+    <span class="copy">Click to copy</span>
+  </div>
+</section>
+
+<footer>
+  <p>Built by <a href="https://github.com/joeynyc">Joey Rodriguez</a> · <a href="https://github.com/joeynyc/repobrief">GitHub</a> · <a href="https://www.npmjs.com/package/repobrief">npm</a> · MIT License</p>
+</footer>
+
+</body>
+</html>
