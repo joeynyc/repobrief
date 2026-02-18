@@ -1,6 +1,6 @@
 {
   "name": "repobrief",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Universal codebase context engine for AI coding agents",
   "type": "module",
   "bin": {
