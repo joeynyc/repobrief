@@ -8,28 +8,28 @@ import { runUpdate } from "./commands/update.js";
 const program = new Command();
 
 program
-  .name("codemap")
+  .name("repobrief")
   .description("Universal codebase context engine for AI coding agents")
   .version("0.1.0");
 
 program
   .command("init")
-  .description("Scan repository and generate .codemap context files")
+  .description("Scan repository and generate .repobrief context files")
   .action(async () => {
     const rootDir = process.cwd();
     try {
       await runInit(rootDir);
-      console.log(`Codemap initialized at ${path.join(rootDir, ".codemap")}`);
+      console.log(`RepoBrief initialized at ${path.join(rootDir, ".repobrief")}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
-      console.error(`Failed to initialize codemap: ${message}`);
+      console.error(`Failed to initialize repobrief: ${message}`);
       process.exitCode = 1;
     }
   });
 
 program
   .command("export")
-  .description("Export codemap context for a target AI coding tool")
+  .description("Export repobrief context for a target AI coding tool")
   .requiredOption("-f, --format <target>", "Target format: claude|cursor|codex|markdown")
   .action(async (options: { format: string }) => {
     const rootDir = process.cwd();
@@ -50,7 +50,7 @@ program
     const rootDir = process.cwd();
     try {
       const result = await runUpdate(rootDir);
-      console.log("Codemap updated.");
+      console.log("RepoBrief updated.");
       for (const line of result.diff) {
         console.log(`- ${line}`);
       }

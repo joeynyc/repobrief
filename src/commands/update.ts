@@ -1,9 +1,9 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { CodemapContext } from "../types.js";
+import type { RepoBriefContext } from "../types.js";
 import { runInit } from "./init.js";
 
-function summarizeDiff(previous: CodemapContext, next: CodemapContext): string[] {
+function summarizeDiff(previous: RepoBriefContext, next: RepoBriefContext): string[] {
   const changes: string[] = [];
 
   if (previous.structure.projectType !== next.structure.projectType) {
@@ -31,13 +31,13 @@ function summarizeDiff(previous: CodemapContext, next: CodemapContext): string[]
   return changes;
 }
 
-export async function runUpdate(rootDir: string): Promise<{ context: CodemapContext; diff: string[] }> {
-  const contextPath = path.join(rootDir, ".codemap", "context.json");
-  let previous: CodemapContext | null = null;
+export async function runUpdate(rootDir: string): Promise<{ context: RepoBriefContext; diff: string[] }> {
+  const contextPath = path.join(rootDir, ".repobrief", "context.json");
+  let previous: RepoBriefContext | null = null;
 
   try {
     const raw = await readFile(contextPath, "utf8");
-    previous = JSON.parse(raw) as CodemapContext;
+    previous = JSON.parse(raw) as RepoBriefContext;
   } catch {
     previous = null;
   }

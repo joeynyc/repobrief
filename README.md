@@ -1,8 +1,8 @@
-# codemap
+# repobrief
 
 > Give any AI agent instant understanding of your codebase.
 
-**codemap** auto-generates and maintains a living context map of your project that any AI coding tool can consume — Claude Code, Cursor, Codex, Cline, or anything else.
+**repobrief** auto-generates and maintains a living context map of your project that any AI coding tool can consume — Claude Code, Cursor, Codex, Cline, or anything else.
 
 ## The Problem
 
@@ -11,10 +11,10 @@ Every time you start an AI coding session, the agent re-discovers your project f
 ## The Fix
 
 ```bash
-npx codemap init
+npx repobrief init
 ```
 
-That's it. codemap scans your repo and generates a `.codemap/` directory with:
+That's it. repobrief scans your repo and generates a `.repobrief/` directory with:
 
 - **architecture.md** — project structure, entry points, build system
 - **patterns.md** — coding conventions detected from your actual code
@@ -25,16 +25,16 @@ That's it. codemap scans your repo and generates a `.codemap/` directory with:
 ## Export to Your AI Tool
 
 ```bash
-codemap export --format claude    # → CLAUDE.md
-codemap export --format cursor    # → .cursorrules
-codemap export --format codex     # → AGENTS.md
-codemap export --format markdown  # → universal summary
+repobrief export --format claude    # → CLAUDE.md
+repobrief export --format cursor    # → .cursorrules
+repobrief export --format codex     # → AGENTS.md
+repobrief export --format markdown  # → universal summary
 ```
 
 ## Keep It Fresh
 
 ```bash
-codemap update                    # incremental rescan
+repobrief update                    # incremental rescan
 ```
 
 ## Supported Projects
@@ -44,7 +44,7 @@ Node.js, Python, Swift/Xcode, Rust, Go — detected automatically by manifest fi
 ## Install
 
 ```bash
-npm install -g codemap
+npm install -g repobrief
 ```
 
 ## License

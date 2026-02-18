@@ -64,7 +64,7 @@ export interface DependenciesData {
   dev: DependencyItem[];
 }
 
-export interface CodemapContext {
+export interface RepoBriefContext {
   generatedAt: string;
   rootDir: string;
   structure: StructureData;
@@ -75,5 +75,5 @@ export interface CodemapContext {
 
 export interface Exporter {
   readonly format: string;
-  export(context: CodemapContext, outputDir: string): Promise<string>;
+  export(context: RepoBriefContext, outputDir: string): Promise<string>;
 }

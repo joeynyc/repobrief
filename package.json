@@ -1,10 +1,10 @@
 {
-  "name": "codemap",
+  "name": "repobrief",
   "version": "0.1.0",
   "description": "Universal codebase context engine for AI coding agents",
   "type": "module",
   "bin": {
-    "codemap": "./bin/codemap.js"
+    "repobrief": "./bin/repobrief.js"
   },
   "scripts": {
     "build": "tsc",

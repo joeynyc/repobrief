@@ -1,11 +1,11 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { CodemapContext, Exporter } from "../types.js";
+import type { RepoBriefContext, Exporter } from "../types.js";
 
 export class ClaudeExporter implements Exporter {
   public readonly format = "claude";
 
-  async export(context: CodemapContext, outputDir: string): Promise<string> {
+  async export(context: RepoBriefContext, outputDir: string): Promise<string> {
     await mkdir(outputDir, { recursive: true });
     const outPath = path.join(outputDir, "CLAUDE.md");
 

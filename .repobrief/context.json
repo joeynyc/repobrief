@@ -1,0 +1,224 @@
+{
+  "generatedAt": "2026-02-18T16:05:53.184Z",
+  "rootDir": "/Users/joeyrodriguez/Projects/codemap",
+  "structure": {
+    "projectType": "single",
+    "keyDirectories": [
+      "src"
+    ],
+    "entryPoints": [
+      "./bin/repobrief.js",
+      "src/cli.ts"
+    ],
+    "detection": {
+      "languages": [
+        "JavaScript/TypeScript"
+      ],
+      "framework": null,
+      "buildSystem": "npm scripts",
+      "entryPoints": [
+        "./bin/repobrief.js",
+        "src/cli.ts"
+      ]
+    }
+  },
+  "dependencies": {
+    "runtime": [
+      {
+        "name": "chalk",
+        "version": "^5.4.1",
+        "type": "runtime",
+        "source": "package.json"
+      },
+      {
+        "name": "commander",
+        "version": "^13.1.0",
+        "type": "runtime",
+        "source": "package.json"
+      },
+      {
+        "name": "glob",
+        "version": "^11.0.1",
+        "type": "runtime",
+        "source": "package.json"
+      },
+      {
+        "name": "handlebars",
+        "version": "^4.7.8",
+        "type": "runtime",
+        "source": "package.json"
+      },
+      {
+        "name": "ora",
+        "version": "^8.2.0",
+        "type": "runtime",
+        "source": "package.json"
+      },
+      {
+        "name": "simple-git",
+        "version": "^3.27.0",
+        "type": "runtime",
+        "source": "package.json"
+      }
+    ],
+    "dev": [
+      {
+        "name": "@types/node",
+        "version": "^22.12.0",
+        "type": "dev",
+        "source": "package.json"
+      },
+      {
+        "name": "eslint",
+        "version": "^9.19.0",
+        "type": "dev",
+        "source": "package.json"
+      },
+      {
+        "name": "tsx",
+        "version": "^4.19.3",
+        "type": "dev",
+        "source": "package.json"
+      },
+      {
+        "name": "typescript",
+        "version": "^5.7.3",
+        "type": "dev",
+        "source": "package.json"
+      },
+      {
+        "name": "vitest",
+        "version": "^3.0.5",
+        "type": "dev",
+        "source": "package.json"
+      }
+    ]
+  },
+  "gitHistory": {
+    "hotFiles": [
+      {
+        "path": "CLAUDE.md",
+        "commits": 1
+      },
+      {
+        "path": "src/analyzers/dependencies.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/analyzers/git-history.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/analyzers/patterns.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/analyzers/structure.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/cli.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/commands/export.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/commands/init.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/commands/update.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/exporters/claude.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/exporters/codex.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/exporters/cursor.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/exporters/markdown.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/types.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/utils/detection.ts",
+        "commits": 1
+      },
+      {
+        "path": "src/utils/fs.ts",
+        "commits": 1
+      },
+      {
+        "path": ".gitignore",
+        "commits": 1
+      },
+      {
+        "path": "package-lock.json",
+        "commits": 1
+      },
+      {
+        "path": "AGENTS.md",
+        "commits": 1
+      },
+      {
+        "path": "README.md",
+        "commits": 1
+      }
+    ],
+    "recentCommits": [
+      {
+        "hash": "d19a059726237d22132c9fa712948d6ee0943252",
+        "date": "2026-02-18T10:56:23-05:00",
+        "message": "v0.1.0: Working codemap CLI with init, export, update commands",
+        "author": "Joey Rodriguez"
+      },
+      {
+        "hash": "587bf4a8d92ade1c435ec70c68ac2822eebca7ed",
+        "date": "2026-02-18T10:29:35-05:00",
+        "message": "Add .gitignore, remove node_modules from tracking",
+        "author": "Joey Rodriguez"
+      },
+      {
+        "hash": "e861bde6bf38c0ba8e8fa8814f988ecc9148bc44",
+        "date": "2026-02-18T10:29:28-05:00",
+        "message": "npm install",
+        "author": "Joey Rodriguez"
+      },
+      {
+        "hash": "3d8e4053eeabee1e778ae0d61c8d14640f2071ad",
+        "date": "2026-02-18T10:29:15-05:00",
+        "message": "Initial scaffold: package.json, tsconfig, AGENTS.md, README",
+        "author": "Joey Rodriguez"
+      }
+    ],
+    "contributors": [
+      {
+        "name": "Joey Rodriguez",
+        "email": "joeyr1983@gmail.com",
+        "commits": 4
+      }
+    ]
+  },
+  "patterns": {
+    "namingConvention": "kebab-case",
+    "importStyle": "esm",
+    "errorHandling": [
+      "Promise.catch",
+      "console.error logging",
+      "try/catch",
+      "throw new Error"
+    ]
+  }
+}

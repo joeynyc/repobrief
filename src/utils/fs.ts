@@ -4,7 +4,7 @@ import { glob } from "glob";
 import type { FileStatSummary } from "../types.js";
 
 function normalizeIgnorePatterns(patterns: string[]): string[] {
-  const base = ["**/.git/**", "**/node_modules/**", "**/dist/**", "**/.codemap/**"];
+  const base = ["**/.git/**", "**/node_modules/**", "**/dist/**", "**/.repobrief/**"];
   return [...base, ...patterns.filter((line) => line.length > 0 && !line.startsWith("#"))];
 }
 

@@ -2,7 +2,7 @@ import { simpleGit } from "simple-git";
 import type { DefaultLogFields } from "simple-git";
 import type { Analyzer, AnalysisResult, GitContributor, GitHistoryData, GitHotFile } from "../types.js";
 
-const HOTFILE_IGNORE_PATTERNS = ["node_modules/", "dist/", ".git/", "build/", "coverage/", ".codemap/"];
+const HOTFILE_IGNORE_PATTERNS = ["node_modules/", "dist/", ".git/", "build/", "coverage/", ".repobrief/"];
 
 function shouldIgnorePath(filePath: string): boolean {
   return HOTFILE_IGNORE_PATTERNS.some((pattern) => filePath === pattern.slice(0, -1) || filePath.includes(pattern));

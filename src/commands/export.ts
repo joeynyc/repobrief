@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { CodemapContext, Exporter } from "../types.js";
+import type { RepoBriefContext, Exporter } from "../types.js";
 import { ClaudeExporter } from "../exporters/claude.js";
 import { CursorExporter } from "../exporters/cursor.js";
 import { CodexExporter } from "../exporters/codex.js";
@@ -22,20 +22,20 @@ function getExporter(format: string): Exporter {
 }
 
 export async function runExport(rootDir: string, format: string): Promise<string> {
-  const contextPath = path.join(rootDir, ".codemap", "context.json");
+  const contextPath = path.join(rootDir, ".repobrief", "context.json");
   let contextRaw: string;
 
   try {
     contextRaw = await readFile(contextPath, "utf8");
   } catch {
-    throw new Error("Missing .codemap/context.json. Run `codemap init` first.");
+    throw new Error("Missing .repobrief/context.json. Run `repobrief init` first.");
   }
 
-  let context: CodemapContext;
+  let context: RepoBriefContext;
   try {
-    context = JSON.parse(contextRaw) as CodemapContext;
+    context = JSON.parse(contextRaw) as RepoBriefContext;
   } catch {
-    throw new Error("Invalid .codemap/context.json. Re-run `codemap init` to regenerate it.");
+    throw new Error("Invalid .repobrief/context.json. Re-run `repobrief init` to regenerate it.");
   }
 
   const exporter = getExporter(format);
