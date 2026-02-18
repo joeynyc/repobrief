@@ -1,12 +1,14 @@
 {
-  "generatedAt": "2026-02-18T16:05:53.184Z",
-  "rootDir": "/Users/joeyrodriguez/Projects/codemap",
+  "generatedAt": "2026-02-18T16:26:01.442Z",
+  "rootDir": "/Users/joeyrodriguez/Projects/repobrief",
   "structure": {
     "projectType": "single",
     "keyDirectories": [
-      "src"
+      "src",
+      "tests"
     ],
     "entryPoints": [
+      "dist/cli.js",
       "./bin/repobrief.js",
       "src/cli.ts"
     ],
@@ -17,6 +19,7 @@
       "framework": null,
       "buildSystem": "npm scripts",
       "entryPoints": [
+        "dist/cli.js",
         "./bin/repobrief.js",
         "src/cli.ts"
       ]
@@ -97,15 +100,75 @@
   "gitHistory": {
     "hotFiles": [
       {
+        "path": "README.md",
+        "commits": 4
+      },
+      {
+        "path": ".gitignore",
+        "commits": 2
+      },
+      {
+        "path": "AGENTS.md",
+        "commits": 2
+      },
+      {
+        "path": "package.json",
+        "commits": 2
+      },
+      {
+        "path": "src/analyzers/git-history.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/cli.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/commands/export.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/commands/init.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/commands/update.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/exporters/claude.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/exporters/codex.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/exporters/cursor.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/exporters/markdown.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/types.ts",
+        "commits": 2
+      },
+      {
+        "path": "src/utils/fs.ts",
+        "commits": 2
+      },
+      {
+        "path": "assets/banner.png",
+        "commits": 1
+      },
+      {
         "path": "CLAUDE.md",
         "commits": 1
       },
       {
         "path": "src/analyzers/dependencies.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/analyzers/git-history.ts",
         "commits": 1
       },
       {
@@ -115,69 +178,27 @@
       {
         "path": "src/analyzers/structure.ts",
         "commits": 1
-      },
-      {
-        "path": "src/cli.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/commands/export.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/commands/init.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/commands/update.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/exporters/claude.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/exporters/codex.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/exporters/cursor.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/exporters/markdown.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/types.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/utils/detection.ts",
-        "commits": 1
-      },
-      {
-        "path": "src/utils/fs.ts",
-        "commits": 1
-      },
-      {
-        "path": ".gitignore",
-        "commits": 1
-      },
-      {
-        "path": "package-lock.json",
-        "commits": 1
-      },
-      {
-        "path": "AGENTS.md",
-        "commits": 1
-      },
-      {
-        "path": "README.md",
-        "commits": 1
       }
     ],
     "recentCommits": [
+      {
+        "hash": "5e07a324c8dd4b9d5b6cf1beda11e828ac78fe43",
+        "date": "2026-02-18T11:19:14-05:00",
+        "message": "Remove roadmap from public README, keep private locally",
+        "author": "Joey Rodriguez"
+      },
+      {
+        "hash": "3a62cbb1b302423b9af6e073f533229609f9a00a",
+        "date": "2026-02-18T11:14:52-05:00",
+        "message": "Polish README with banner, badges, and full docs",
+        "author": "Joey Rodriguez"
+      },
+      {
+        "hash": "7f3bfa31fd9e5066d97f1349d36856230a6a42df",
+        "date": "2026-02-18T11:05:59-05:00",
+        "message": "Rename to repobrief — universal codebase context engine for AI agents",
+        "author": "Joey Rodriguez"
+      },
       {
         "hash": "d19a059726237d22132c9fa712948d6ee0943252",
         "date": "2026-02-18T10:56:23-05:00",
@@ -207,7 +228,7 @@
       {
         "name": "Joey Rodriguez",
         "email": "joeyr1983@gmail.com",
-        "commits": 4
+        "commits": 7
       }
     ]
   },

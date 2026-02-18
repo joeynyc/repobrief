@@ -1,0 +1,9 @@
+src/
+tests/
+.repobrief/
+.gitignore
+AGENTS.md
+ROADMAP.md
+tsconfig.json
+*.ts
+!dist/**

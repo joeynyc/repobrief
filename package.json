@@ -13,7 +13,16 @@
     "lint": "eslint src/",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["ai", "cli", "context", "codebase", "claude", "cursor", "codex", "developer-tools"],
+  "keywords": [
+    "ai",
+    "cli",
+    "context",
+    "codebase",
+    "claude",
+    "cursor",
+    "codex",
+    "developer-tools"
+  ],
   "author": "Joey Rodriguez",
   "license": "MIT",
   "dependencies": {
@@ -33,5 +42,13 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "main": "dist/cli.js",
+  "files": [
+    "dist",
+    "bin",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ]
 }
