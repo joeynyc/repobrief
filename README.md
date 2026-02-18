@@ -94,17 +94,6 @@ npm install -g repobrief
 5. **Context Assembly** — Combines all analysis into structured markdown + JSON
 6. **Export** — Transforms context into the format your AI tool expects
 
-## Roadmap
-
-- [x] `repobrief init` — full codebase analysis
-- [x] `repobrief export` — Claude, Cursor, Codex, Markdown formats
-- [x] `repobrief update` — incremental re-analysis
-- [ ] `repobrief query` — natural language questions about your codebase
-- [ ] Tree-sitter AST parsing for deeper pattern detection
-- [ ] Git hook integration — auto-update on commit
-- [ ] Team sharing — shared context across your org
-- [ ] CI/CD integration
-
 ## Contributing
 
 RepoBrief is open source under the MIT License. Issues, PRs, and feedback welcome.
