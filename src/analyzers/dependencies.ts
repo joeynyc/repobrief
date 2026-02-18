@@ -51,6 +51,31 @@ function parseCargoToml(content: string, source: string): DependencyItem[] {
   return output;
 }
 
+function parsePyprojectToml(content: string): { runtime: DependencyItem[]; dev: DependencyItem[] } {
+  const runtime: DependencyItem[] = [];
+  const dev: DependencyItem[] = [];
+  const dependencyListRegex = /dependencies\s*=\s*\[([\s\S]*?)\]/m;
+  const devListRegex = /\[project\.optional-dependencies\][\s\S]*?(?=\n\[|$)/m;
+
+  const runtimeBlock = content.match(dependencyListRegex)?.[1] ?? "";
+  for (const raw of runtimeBlock.split("\n")) {
+    const cleaned = raw.replaceAll(/[",]/g, "").trim();
+    if (!cleaned) continue;
+    const [name, version = "*"] = cleaned.split(/==|>=|<=|~=|>|</);
+    runtime.push({ name: name.trim(), version: version.trim() || "*", type: "runtime", source: "pyproject.toml" });
+  }
+
+  const devSection = content.match(devListRegex)?.[0] ?? "";
+  const quoted = devSection.match(/"([^"]+)"/g) ?? [];
+  for (const q of quoted) {
+    const depSpec = q.replaceAll('"', "").trim();
+    const [name, version = "*"] = depSpec.split(/==|>=|<=|~=|>|</);
+    dev.push({ name: name.trim(), version: version.trim() || "*", type: "dev", source: "pyproject.toml" });
+  }
+
+  return { runtime, dev };
+}
+
 export class DependenciesAnalyzer implements Analyzer<DependenciesData> {
   public readonly name = "dependencies";
 
@@ -85,6 +110,13 @@ export class DependenciesAnalyzer implements Analyzer<DependenciesData> {
     const requirements = await readFileSafe(path.join(rootDir, "requirements.txt"));
     if (requirements) {
       runtime.push(...parseRequirements(requirements, "requirements.txt", "runtime"));
+    }
+
+    const pyproject = await readFileSafe(path.join(rootDir, "pyproject.toml"));
+    if (pyproject) {
+      const parsed = parsePyprojectToml(pyproject);
+      runtime.push(...parsed.runtime);
+      dev.push(...parsed.dev);
     }
 
     const data: DependenciesData = {

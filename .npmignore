@@ -1,9 +1,11 @@
 src/
 tests/
+test-results/
 .repobrief/
 .gitignore
 AGENTS.md
 ROADMAP.md
+COMPETITIVE.md
 tsconfig.json
-*.ts
-!dist/**
+vitest.config.ts
+assets/

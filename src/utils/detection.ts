@@ -40,6 +40,16 @@ function detectJsFramework(deps: Record<string, string>): string | null {
   return null;
 }
 
+function detectByPackageName(name: string | undefined): string | null {
+  const normalized = (name ?? "").toLowerCase();
+  if (normalized === "express" || normalized.includes("express")) return "Express";
+  if (normalized === "fastify" || normalized.includes("fastify")) return "Fastify";
+  if (normalized.includes("flask")) return "Flask";
+  if (normalized.includes("fastapi")) return "FastAPI";
+  if (normalized.includes("next")) return "Next.js";
+  return null;
+}
+
 function detectPythonFramework(content: string): string | null {
   const normalized = content.toLowerCase();
   if (normalized.includes("fastapi")) return "FastAPI";
@@ -93,6 +103,7 @@ export async function detectProject(rootDir: string): Promise<ProjectDetection> 
     try {
       const raw = await readFile(packageJsonPath, "utf8");
       const pkg = JSON.parse(raw) as {
+        name?: string;
         dependencies?: Record<string, string>;
         devDependencies?: Record<string, string>;
         scripts?: Record<string, string>;
@@ -106,6 +117,7 @@ export async function detectProject(rootDir: string): Promise<ProjectDetection> 
       };
 
       framework ??= detectJsFramework(allDeps);
+      framework ??= detectByPackageName(pkg.name);
 
       if ((pkg.scripts?.build ?? "").includes("vite") || allDeps.vite) buildSystem = "Vite";
       else if (allDeps.webpack) buildSystem = "Webpack";

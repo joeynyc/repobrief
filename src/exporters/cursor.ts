@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { RepoBriefContext, Exporter } from "../types.js";
-import { describeDependency, formatProjectOverview, frameworkGuidelines, topDependencies } from "./helpers.js";
+import { describeDependency, frameworkGuidelines, projectOneLiner, rulesToFollow, topDependencies } from "./helpers.js";
 
 export class CursorExporter implements Exporter {
   public readonly format = "cursor";
@@ -10,29 +10,28 @@ export class CursorExporter implements Exporter {
     await mkdir(outputDir, { recursive: true });
     const outPath = path.join(outputDir, ".cursorrules");
 
-    const content = `Project Overview:
-- ${formatProjectOverview(context)}
+    const content = `# Project Intent
+${projectOneLiner(context)}
 
-Architecture:
+# Architecture
 - Entry points: ${context.structure.entryPoints.join(", ") || "none detected"}
-- Key directories: ${context.structure.keyDirectories.join(", ") || "none detected"}
+- Core directories: ${context.structure.keyDirectories.join(", ") || "none detected"}
+- Framework: ${context.structure.detection.framework ?? "unknown"}
 
-Code Conventions:
-- Naming: ${context.patterns.namingConvention}
-- Imports: ${context.patterns.importStyle}
-- Testing: ${context.patterns.testingFramework ?? "unknown"}
-- Linting: ${context.patterns.lintersFormatters.join(", ") || "not configured"}
+# Rules
+${rulesToFollow(context).map((rule) => `- ${rule}`).join("\n")}
+${frameworkGuidelines(context.structure.detection.framework).map((rule) => `- ${rule}`).join("\n")}
 
-Important Dependencies:
-${topDependencies(context, 10).map((dep) => `- ${dep.name}@${dep.version}: ${describeDependency(dep)}`).join("\n") || "- none"}
+# Dependencies
+${topDependencies(context, 10).map((dep) => `- ${dep.name}: ${describeDependency(dep)}`).join("\n") || "- none"}
 
-High-Churn Files:
-${context.gitHistory.hotFiles.slice(0, 10).map((f) => `- ${f.path}`).join("\n") || "- unavailable"}
+# Hot Files
+These files change frequently; inspect recent commits before editing:
+${context.gitHistory.hotFiles.slice(0, 8).map((f) => `- ${f.path} (${f.commits} commits)`).join("\n") || "- unavailable"}
 
-Execution Guidance:
-- Validate changes with ${context.patterns.testCommand}
-- Prefer existing patterns from ${context.structure.keyDirectories.slice(0, 3).join(", ") || "source folders"}
-${frameworkGuidelines(context.structure.detection.framework).map((line) => `- ${line}`).join("\n")}
+# Validation
+- Run ${context.patterns.testCommand}
+- Keep changes scoped and consistent with local file conventions
 `;
 
     await writeFile(outPath, content, "utf8");

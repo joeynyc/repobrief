@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import { ClaudeExporter } from "../../src/exporters/claude.js";
@@ -12,13 +12,17 @@ afterEach(async () => {
 });
 
 describe("ClaudeExporter", () => {
-  it("writes valid markdown with expected sections", async () => {
+  it("writes rich markdown with architecture, rules, and quick-start sections", async () => {
     const dir = await mkdtemp(path.join(os.tmpdir(), "repobrief-claude-"));
     tempDirs.push(dir);
 
+    await mkdir(path.join(dir, "src"), { recursive: true });
+    await writeFile(path.join(dir, "package.json"), "{}", "utf8");
+    await writeFile(path.join(dir, "src", "index.ts"), "export {}", "utf8");
+
     const context: RepoBriefContext = {
       generatedAt: new Date().toISOString(),
-      rootDir: "/tmp/project",
+      rootDir: dir,
       structure: {
         projectType: "single",
         keyDirectories: ["src"],
@@ -57,9 +61,13 @@ describe("ClaudeExporter", () => {
     const md = await readFile(outPath, "utf8");
 
     expect(md.startsWith("# CLAUDE.md — Project Context for Claude Code")).toBe(true);
-    expect(md).toContain("## Project Overview");
-    expect(md).toContain("## Key Dependencies");
-    expect(md).toContain("- express@^4.21.0");
+    expect(md).toContain("This is a Express backend service project built with");
+    expect(md).toContain("## File Tree (key directories, depth=2)");
+    expect(md).toContain("## Entry Points and Responsibilities");
+    expect(md).toContain("## Key Dependencies (what they do here)");
+    expect(md).toContain("**express@^4.21.0**");
+    expect(md).toContain("## Rules to Follow in This Repo");
+    expect(md).toContain("## Quick Start for AI Agents");
     expect(path.basename(outPath)).toBe("CLAUDE.md");
   });
 });

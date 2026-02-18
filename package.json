@@ -47,8 +47,8 @@
   "files": [
     "dist",
     "bin",
-    "templates",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "package.json"
   ]
 }

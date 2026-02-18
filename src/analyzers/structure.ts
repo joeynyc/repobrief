@@ -3,7 +3,7 @@ import type { Analyzer, AnalysisResult, StructureData } from "../types.js";
 import { detectProject } from "../utils/detection.js";
 import { walkDir } from "../utils/fs.js";
 
-const KEY_DIRS = ["src", "lib", "test", "tests", "apps", "packages", "services", "cmd"];
+const KEY_DIRS = ["src", "lib", "test", "tests", "apps", "packages", "services", "cmd", "Sources", "Tests", "api", "server"];
 
 export class StructureAnalyzer implements Analyzer<StructureData> {
   public readonly name = "structure";
@@ -38,7 +38,11 @@ export class StructureAnalyzer implements Analyzer<StructureData> {
         normalized === "main.py" ||
         normalized === "main.go" ||
         normalized === "src/main.rs" ||
-        normalized === "src/lib.rs"
+        normalized === "src/lib.rs" ||
+        normalized === "sources/app/main.swift" ||
+        normalized === "sources/run/main.swift" ||
+        normalized === "sources/main.swift" ||
+        normalized === "cmd/main.go"
       );
     });
 
