@@ -1,40 +1,45 @@
-# Project Instructions for Claude Code
+# CLAUDE.md — Project Context for Claude Code
 
-## Quick Context
-- Project type: single
-- Languages: JavaScript/TypeScript
-- Framework: Unknown
-- Build system: npm scripts
+## Project Overview
+single Unknown framework project using npm scripts
 
-## Important Entry Points
-- ./bin/codemap.js
-- src/cli.ts
+## Architecture
+- Entry points:
+  - dist/cli.js
+  - ./bin/repobrief.js
+  - src/cli.ts
+- Key directories:
+  - src
+  - tests
 
-## Code Patterns to Follow
-- Naming convention: kebab-case
-- Import style: esm
-- Error handling patterns: Promise.catch, console.error logging, try/catch, throw new Error
+## Code Conventions
+- Follow kebab-case naming where applicable
+- Use esm module style
+- Tests use Vitest
+- Linting: not clearly configured
 
-## Dependency Highlights
-Runtime:
-- chalk@^5.4.1
-- commander@^13.1.0
-- glob@^11.0.1
-- handlebars@^4.7.8
-- ora@^8.2.0
-- simple-git@^3.27.0
+## Key Dependencies
+- chalk@^5.4.1 — Terminal string styling and colors.
+- commander@^13.1.0 — CLI argument parser and command framework.
+- glob@^11.0.1 — File path pattern matching utility.
+- handlebars@^4.7.8 — Template engine for text generation.
+- ora@^8.2.0 — Terminal spinner utility for progress feedback.
+- simple-git@^3.27.0 — Promise-friendly wrapper around the Git CLI.
 
-Dev:
-- @types/node@^22.12.0
-- eslint@^9.19.0
-- tsx@^4.19.3
-- typescript@^5.7.3
-- vitest@^3.0.5
+## Hot Spots
+These files change most often — review carefully before modifying:
+- README.md (4 commits)
+- .gitignore (3 commits)
+- package.json (3 commits)
+- AGENTS.md (2 commits)
+- src/analyzers/git-history.ts (2 commits)
+- src/cli.ts (2 commits)
+- src/commands/export.ts (2 commits)
+- src/commands/init.ts (2 commits)
+- src/commands/update.ts (2 commits)
+- src/exporters/claude.ts (2 commits)
 
-## High-Churn Files (review before major changes)
-- .gitignore (1 commits)
-- package-lock.json (1 commits)
-- AGENTS.md (1 commits)
-- README.md (1 commits)
-- package.json (1 commits)
-- tsconfig.json (1 commits)
+## Guidelines
+- Check existing patterns in src, tests before adding new code
+- Run npm run test before committing
+- Follow repository conventions for framework-specific changes

@@ -4,7 +4,19 @@ import { StructureAnalyzer } from "../analyzers/structure.js";
 import { DependenciesAnalyzer } from "../analyzers/dependencies.js";
 import { GitHistoryAnalyzer } from "../analyzers/git-history.js";
 import { PatternsAnalyzer } from "../analyzers/patterns.js";
+import { walkDir } from "../utils/fs.js";
 import type { RepoBriefContext } from "../types.js";
+
+export interface InitOptions {
+  verbose?: boolean;
+  onProgress?: (message: string) => void;
+}
+
+export interface InitResult {
+  context: RepoBriefContext;
+  filesAnalyzed: number;
+  directoriesAnalyzed: number;
+}
 
 function renderArchitecture(context: RepoBriefContext): string {
   const { structure } = context;
@@ -22,7 +34,7 @@ function renderDependencies(context: RepoBriefContext): string {
 function renderPatterns(context: RepoBriefContext): string {
   return `# Patterns\n\n- Naming convention: **${context.patterns.namingConvention}**\n- Import style: **${context.patterns.importStyle}**\n\n## Error handling\n${
     context.patterns.errorHandling.map((pattern) => `- ${pattern}`).join("\n") || "- None detected"
-  }\n`;
+  }\n\n## Development Environment\n- Testing framework: ${context.patterns.testingFramework ?? "Unknown"}\n- Test command: ${context.patterns.testCommand}\n- Linter/formatter: ${context.patterns.lintersFormatters.join(", ") || "None detected"}\n- CI/CD: ${context.patterns.ciCd.join(", ") || "None detected"}\n- Monorepo tooling: ${context.patterns.monorepoTooling.join(", ") || "None detected"}\n- Docker: ${context.patterns.docker.join(", ") || "None detected"}\n`;
 }
 
 function renderHotfiles(context: RepoBriefContext): string {
@@ -31,13 +43,16 @@ function renderHotfiles(context: RepoBriefContext): string {
   }\n`;
 }
 
-export async function runInit(rootDir: string): Promise<RepoBriefContext> {
-  const [structure, dependencies, gitHistory, patterns] = await Promise.all([
-    new StructureAnalyzer().analyze(rootDir),
-    new DependenciesAnalyzer().analyze(rootDir),
-    new GitHistoryAnalyzer().analyze(rootDir),
-    new PatternsAnalyzer().analyze(rootDir)
-  ]);
+export async function runInit(rootDir: string, options: InitOptions = {}): Promise<InitResult> {
+  const progress = options.onProgress;
+  progress?.("Running structure analyzer...");
+  const structure = await new StructureAnalyzer().analyze(rootDir);
+  progress?.("Running dependencies analyzer...");
+  const dependencies = await new DependenciesAnalyzer().analyze(rootDir);
+  progress?.("Running git history analyzer...");
+  const gitHistory = await new GitHistoryAnalyzer().analyze(rootDir);
+  progress?.("Running patterns analyzer...");
+  const patterns = await new PatternsAnalyzer().analyze(rootDir);
 
   const context: RepoBriefContext = {
     generatedAt: new Date().toISOString(),
@@ -51,6 +66,7 @@ export async function runInit(rootDir: string): Promise<RepoBriefContext> {
   const repobriefDir = path.join(rootDir, ".repobrief");
   await mkdir(repobriefDir, { recursive: true });
 
+  progress?.("Writing .repobrief output files...");
   await Promise.all([
     writeFile(path.join(repobriefDir, "architecture.md"), renderArchitecture(context), "utf8"),
     writeFile(path.join(repobriefDir, "dependencies.md"), renderDependencies(context), "utf8"),
@@ -59,5 +75,12 @@ export async function runInit(rootDir: string): Promise<RepoBriefContext> {
     writeFile(path.join(repobriefDir, "context.json"), JSON.stringify(context, null, 2), "utf8")
   ]);
 
-  return context;
+  const allFiles = await walkDir(rootDir);
+  const dirSet = new Set(allFiles.map((f) => path.dirname(f)).filter((d) => d !== "."));
+
+  return {
+    context,
+    filesAnalyzed: allFiles.length,
+    directoriesAnalyzed: dirSet.size
+  };
 }

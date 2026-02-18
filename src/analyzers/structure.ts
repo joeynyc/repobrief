@@ -54,7 +54,7 @@ export class StructureAnalyzer implements Analyzer<StructureData> {
     return {
       name: this.name,
       data,
-      summary: `${projectType} project with ${presentDirs.length} key directories and ${entryPoints.length} entry points`
+      summary: `${projectType} ${detection.framework ?? "Unknown framework"} project with ${presentDirs.length} key directories and ${entryPoints.length} entry points`
     };
   }
 }

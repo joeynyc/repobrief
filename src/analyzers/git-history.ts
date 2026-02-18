@@ -52,7 +52,7 @@ export class GitHistoryAnalyzer implements Analyzer<GitHistoryData> {
     const isRepo = await git.checkIsRepo();
 
     if (!isRepo) {
-      const empty: GitHistoryData = { hotFiles: [], recentCommits: [], contributors: [] };
+      const empty: GitHistoryData = { hotFiles: [], recentCommits: [], contributors: [], totalCommits: 0 };
       return {
         name: this.name,
         data: empty,
@@ -60,10 +60,11 @@ export class GitHistoryAnalyzer implements Analyzer<GitHistoryData> {
       };
     }
 
-    const [logResult, numstatRaw, shortlogRaw] = await Promise.all([
+    const [logResult, numstatRaw, shortlogRaw, totalCommitsRaw] = await Promise.all([
       git.log({ maxCount: 30 }),
       git.raw(["log", "--pretty=tformat:", "--numstat", "-n", "200"]),
-      git.raw(["shortlog", "-sne", "HEAD"])
+      git.raw(["shortlog", "-sne", "HEAD"]),
+      git.raw(["rev-list", "--count", "HEAD"])
     ]);
 
     const data: GitHistoryData = {
@@ -74,7 +75,8 @@ export class GitHistoryAnalyzer implements Analyzer<GitHistoryData> {
         message: commit.message,
         author: commit.author_name
       })),
-      contributors: parseShortlog(shortlogRaw)
+      contributors: parseShortlog(shortlogRaw),
+      totalCommits: Number(totalCommitsRaw.trim()) || logResult.total
     };
 
     return {

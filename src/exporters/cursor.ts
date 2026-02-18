@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { RepoBriefContext, Exporter } from "../types.js";
+import { describeDependency, formatProjectOverview, frameworkGuidelines, topDependencies } from "./helpers.js";
 
 export class CursorExporter implements Exporter {
   public readonly format = "cursor";
@@ -9,20 +10,29 @@ export class CursorExporter implements Exporter {
     await mkdir(outputDir, { recursive: true });
     const outPath = path.join(outputDir, ".cursorrules");
 
-    const content = `You are working in a ${context.structure.projectType} repository.
-Languages: ${context.structure.detection.languages.join(", ") || "Unknown"}.
-Framework: ${context.structure.detection.framework ?? "Unknown"}. Build: ${context.structure.detection.buildSystem ?? "Unknown"}.
+    const content = `Project Overview:
+- ${formatProjectOverview(context)}
 
-Conventions to follow:
+Architecture:
+- Entry points: ${context.structure.entryPoints.join(", ") || "none detected"}
+- Key directories: ${context.structure.keyDirectories.join(", ") || "none detected"}
+
+Code Conventions:
 - Naming: ${context.patterns.namingConvention}
-- Module style: ${context.patterns.importStyle}
-- Error handling: ${context.patterns.errorHandling.join(", ") || "not strongly established"}
+- Imports: ${context.patterns.importStyle}
+- Testing: ${context.patterns.testingFramework ?? "unknown"}
+- Linting: ${context.patterns.lintersFormatters.join(", ") || "not configured"}
 
-Likely entry points:
-${context.structure.entryPoints.map((entry) => `- ${entry}`).join("\n") || "- none"}
+Important Dependencies:
+${topDependencies(context, 10).map((dep) => `- ${dep.name}@${dep.version}: ${describeDependency(dep)}`).join("\n") || "- none"}
 
-High-churn files (be careful when editing):
-${context.gitHistory.hotFiles.slice(0, 10).map((file) => `- ${file.path}`).join("\n") || "- unavailable"}
+High-Churn Files:
+${context.gitHistory.hotFiles.slice(0, 10).map((f) => `- ${f.path}`).join("\n") || "- unavailable"}
+
+Execution Guidance:
+- Validate changes with ${context.patterns.testCommand}
+- Prefer existing patterns from ${context.structure.keyDirectories.slice(0, 3).join(", ") || "source folders"}
+${frameworkGuidelines(context.structure.detection.framework).map((line) => `- ${line}`).join("\n")}
 `;
 
     await writeFile(outPath, content, "utf8");

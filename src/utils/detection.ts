@@ -22,6 +22,58 @@ async function exists(filePath: string): Promise<boolean> {
   }
 }
 
+function depExists(deps: Record<string, string>, ...names: string[]): boolean {
+  return names.some((name) => Object.hasOwn(deps, name));
+}
+
+function detectJsFramework(deps: Record<string, string>): string | null {
+  if (depExists(deps, "next")) return "Next.js";
+  if (depExists(deps, "@nestjs/core", "@nestjs/common")) return "Nest.js";
+  if (depExists(deps, "express")) return "Express";
+  if (depExists(deps, "fastify")) return "Fastify";
+  if (depExists(deps, "hono")) return "Hono";
+  if (depExists(deps, "react", "react-dom")) return "React";
+  if (depExists(deps, "vue", "@vue/runtime-core", "nuxt")) return "Vue";
+  if (depExists(deps, "@angular/core")) return "Angular";
+  if (depExists(deps, "svelte", "@sveltejs/kit")) return "Svelte";
+  if (depExists(deps, "astro")) return "Astro";
+  return null;
+}
+
+function detectPythonFramework(content: string): string | null {
+  const normalized = content.toLowerCase();
+  if (normalized.includes("fastapi")) return "FastAPI";
+  if (normalized.includes("starlette")) return "Starlette";
+  if (normalized.includes("django")) return "Django";
+  if (normalized.includes("flask")) return "Flask";
+  return null;
+}
+
+function detectRustFramework(content: string): string | null {
+  const lower = content.toLowerCase();
+  if (lower.includes("tauri")) return "Tauri";
+  if (lower.includes("axum")) return "Axum";
+  if (lower.includes("actix-web") || lower.includes("actix")) return "Actix";
+  if (lower.includes("rocket")) return "Rocket";
+  return null;
+}
+
+function detectGoFramework(content: string): string | null {
+  const lower = content.toLowerCase();
+  if (lower.includes("github.com/gin-gonic/gin")) return "Gin";
+  if (lower.includes("github.com/labstack/echo")) return "Echo";
+  if (lower.includes("github.com/gofiber/fiber")) return "Fiber";
+  if (lower.includes("github.com/go-chi/chi")) return "Chi";
+  return null;
+}
+
+function detectSwiftFramework(content: string): string | null {
+  const lower = content.toLowerCase();
+  if (lower.includes("vapor")) return "Vapor";
+  if (lower.includes("swiftui") || /import\s+swiftui/.test(content)) return "SwiftUI";
+  return null;
+}
+
 export async function detectProject(rootDir: string): Promise<ProjectDetection> {
   const languages = new Set<string>();
   let framework: string | null = null;
@@ -53,11 +105,7 @@ export async function detectProject(rootDir: string): Promise<ProjectDetection> 
         ...(pkg.devDependencies ?? {})
       };
 
-      if (allDeps.react || allDeps.next) framework = allDeps.next ? "Next.js" : "React";
-      else if (allDeps.vue || allDeps.nuxt) framework = allDeps.nuxt ? "Nuxt" : "Vue";
-      else if (allDeps.svelte || allDeps["@sveltejs/kit"]) framework = "Svelte";
-      else if (allDeps.express) framework = "Express";
-      else if (allDeps.nestjs || allDeps["@nestjs/core"]) framework = "NestJS";
+      framework ??= detectJsFramework(allDeps);
 
       if ((pkg.scripts?.build ?? "").includes("vite") || allDeps.vite) buildSystem = "Vite";
       else if (allDeps.webpack) buildSystem = "Webpack";
@@ -77,8 +125,21 @@ export async function detectProject(rootDir: string): Promise<ProjectDetection> 
     }
   }
 
+  if (await exists(path.join(rootDir, "requirements.txt"))) {
+    const req = await readFile(path.join(rootDir, "requirements.txt"), "utf8").catch(() => "");
+    framework ??= detectPythonFramework(req);
+  }
+
+  if (await exists(path.join(rootDir, "pyproject.toml"))) {
+    const pyproject = await readFile(path.join(rootDir, "pyproject.toml"), "utf8").catch(() => "");
+    framework ??= detectPythonFramework(pyproject);
+  }
+
   if (await exists(path.join(rootDir, "Cargo.toml"))) {
     buildSystem ??= "Cargo";
+    const cargoToml = await readFile(path.join(rootDir, "Cargo.toml"), "utf8").catch(() => "");
+    framework ??= detectRustFramework(cargoToml);
+
     const candidates = ["src/main.rs", "src/lib.rs"];
     for (const candidate of candidates) {
       if (await exists(path.join(rootDir, candidate))) entryPoints.add(candidate);
@@ -87,16 +148,19 @@ export async function detectProject(rootDir: string): Promise<ProjectDetection> 
 
   if (await exists(path.join(rootDir, "go.mod"))) {
     buildSystem ??= "Go modules";
+    const goMod = await readFile(path.join(rootDir, "go.mod"), "utf8").catch(() => "");
+    framework ??= detectGoFramework(goMod);
     if (await exists(path.join(rootDir, "main.go"))) entryPoints.add("main.go");
   }
 
   if (await exists(path.join(rootDir, "Package.swift"))) {
     buildSystem ??= "Swift Package Manager";
-    if (await exists(path.join(rootDir, "main.swift"))) {
-      entryPoints.add("main.swift");
-    }
     try {
       const swiftPkg = await readFile(path.join(rootDir, "Package.swift"), "utf8");
+      framework ??= detectSwiftFramework(swiftPkg);
+      if (await exists(path.join(rootDir, "main.swift"))) {
+        entryPoints.add("main.swift");
+      }
       if (/\@main\b/.test(swiftPkg)) {
         entryPoints.add("Package.swift (@main)");
       }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T16:26:01.442Z",
+  "generatedAt": "2026-02-18T16:35:46.970Z",
   "rootDir": "/Users/joeyrodriguez/Projects/repobrief",
   "structure": {
     "projectType": "single",
@@ -105,14 +105,14 @@
       },
       {
         "path": ".gitignore",
-        "commits": 2
-      },
-      {
-        "path": "AGENTS.md",
-        "commits": 2
+        "commits": 3
       },
       {
         "path": "package.json",
+        "commits": 3
+      },
+      {
+        "path": "AGENTS.md",
         "commits": 2
       },
       {
@@ -160,27 +160,33 @@
         "commits": 2
       },
       {
-        "path": "assets/banner.png",
+        "path": ".npmignore",
         "commits": 1
       },
       {
-        "path": "CLAUDE.md",
+        "path": "LICENSE",
         "commits": 1
       },
       {
-        "path": "src/analyzers/dependencies.ts",
+        "path": "test-results/express.md",
         "commits": 1
       },
       {
-        "path": "src/analyzers/patterns.ts",
+        "path": "test-results/flask.md",
         "commits": 1
       },
       {
-        "path": "src/analyzers/structure.ts",
+        "path": "test-results/vapor.md",
         "commits": 1
       }
     ],
     "recentCommits": [
+      {
+        "hash": "8704c93963e5d60d507d4085623b3dee81b9a3a4",
+        "date": "2026-02-18T11:26:46-05:00",
+        "message": "Foundation fixes: bin setup, LICENSE, tests, real-world testing, competitive analysis",
+        "author": "Joey Rodriguez"
+      },
       {
         "hash": "5e07a324c8dd4b9d5b6cf1beda11e828ac78fe43",
         "date": "2026-02-18T11:19:14-05:00",
@@ -228,9 +234,10 @@
       {
         "name": "Joey Rodriguez",
         "email": "joeyr1983@gmail.com",
-        "commits": 7
+        "commits": 8
       }
-    ]
+    ],
+    "totalCommits": 8
   },
   "patterns": {
     "namingConvention": "kebab-case",
@@ -240,6 +247,12 @@
       "console.error logging",
       "try/catch",
       "throw new Error"
-    ]
+    ],
+    "testingFramework": "Vitest",
+    "testCommand": "npm run test",
+    "lintersFormatters": [],
+    "ciCd": [],
+    "monorepoTooling": [],
+    "docker": []
   }
 }

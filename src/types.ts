@@ -44,6 +44,7 @@ export interface GitHistoryData {
   hotFiles: GitHotFile[];
   recentCommits: Array<{ hash: string; date: string; message: string; author: string }>;
   contributors: GitContributor[];
+  totalCommits: number;
 }
 
 export interface StructureData {
@@ -57,6 +58,12 @@ export interface PatternsData {
   namingConvention: "camelCase" | "snake_case" | "kebab-case" | "mixed";
   importStyle: "esm" | "commonjs" | "mixed" | "unknown";
   errorHandling: string[];
+  testingFramework: string | null;
+  testCommand: string;
+  lintersFormatters: string[];
+  ciCd: string[];
+  monorepoTooling: string[];
+  docker: string[];
 }
 
 export interface DependenciesData {

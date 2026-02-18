@@ -37,21 +37,28 @@ describe("ClaudeExporter", () => {
       gitHistory: {
         hotFiles: [{ path: "src/index.ts", commits: 5 }],
         recentCommits: [],
-        contributors: []
+        contributors: [],
+        totalCommits: 5
       },
       patterns: {
         namingConvention: "camelCase",
         importStyle: "esm",
-        errorHandling: ["try/catch"]
+        errorHandling: ["try/catch"],
+        testingFramework: "Vitest",
+        testCommand: "npm run test",
+        lintersFormatters: ["ESLint"],
+        ciCd: ["GitHub Actions"],
+        monorepoTooling: [],
+        docker: ["Dockerfile"]
       }
     };
 
     const outPath = await new ClaudeExporter().export(context, dir);
     const md = await readFile(outPath, "utf8");
 
-    expect(md.startsWith("# Project Instructions for Claude Code")).toBe(true);
-    expect(md).toContain("## Quick Context");
-    expect(md).toContain("## Dependency Highlights");
+    expect(md.startsWith("# CLAUDE.md — Project Context for Claude Code")).toBe(true);
+    expect(md).toContain("## Project Overview");
+    expect(md).toContain("## Key Dependencies");
     expect(md).toContain("- express@^4.21.0");
     expect(path.basename(outPath)).toBe("CLAUDE.md");
   });

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { RepoBriefContext } from "../types.js";
-import { runInit } from "./init.js";
+import { runInit, type InitOptions } from "./init.js";
 
 function summarizeDiff(previous: RepoBriefContext, next: RepoBriefContext): string[] {
   const changes: string[] = [];
@@ -31,7 +31,10 @@ function summarizeDiff(previous: RepoBriefContext, next: RepoBriefContext): stri
   return changes;
 }
 
-export async function runUpdate(rootDir: string): Promise<{ context: RepoBriefContext; diff: string[] }> {
+export async function runUpdate(
+  rootDir: string,
+  options: InitOptions = {}
+): Promise<{ context: RepoBriefContext; diff: string[] }> {
   const contextPath = path.join(rootDir, ".repobrief", "context.json");
   let previous: RepoBriefContext | null = null;
 
@@ -42,7 +45,8 @@ export async function runUpdate(rootDir: string): Promise<{ context: RepoBriefCo
     previous = null;
   }
 
-  const context = await runInit(rootDir);
+  const result = await runInit(rootDir, options);
+  const context = result.context;
   const diff = previous ? summarizeDiff(previous, context) : ["No previous context found; created fresh context."];
 
   await writeFile(contextPath, JSON.stringify(context, null, 2), "utf8");

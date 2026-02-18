@@ -48,12 +48,34 @@ function detectErrorPatterns(contents: string[]): string[] {
   return [...found];
 }
 
+function detectTestingFramework(
+  packageDeps: Record<string, string>,
+  files: string[],
+  contentSamples: string[]
+): { framework: string | null; testCommand: string } {
+  if (Object.hasOwn(packageDeps, "vitest")) return { framework: "Vitest", testCommand: "npm run test" };
+  if (Object.hasOwn(packageDeps, "jest")) return { framework: "Jest", testCommand: "npm run test" };
+  if (Object.hasOwn(packageDeps, "mocha")) return { framework: "Mocha", testCommand: "npm run test" };
+  if (Object.hasOwn(packageDeps, "@playwright/test")) return { framework: "Playwright Test", testCommand: "npx playwright test" };
+
+  const hasPytest = contentSamples.some((s) => /\bpytest\b/i.test(s)) || files.some((f) => /(^|\/)test_.*\.py$/.test(f));
+  if (hasPytest) return { framework: "pytest", testCommand: "pytest" };
+
+  const hasXCTest = contentSamples.some((s) => /\bXCTest\b/.test(s)) || files.some((f) => /Tests?\.swift$/.test(f));
+  if (hasXCTest) return { framework: "XCTest", testCommand: "xcodebuild test" };
+
+  const hasNodeTests = files.some((f) => /\.(test|spec)\.(ts|tsx|js|jsx)$/.test(f));
+  if (hasNodeTests) return { framework: "JavaScript tests", testCommand: "npm run test" };
+
+  return { framework: null, testCommand: "run project tests" };
+}
+
 export class PatternsAnalyzer implements Analyzer<PatternsData> {
   public readonly name = "patterns";
 
   async analyze(rootDir: string): Promise<AnalysisResult<PatternsData>> {
     const files = await walkDir(rootDir, ["**/*.min.js", "**/*.lock"]);
-    const sourceFiles = files.filter((file) => /\.(ts|tsx|js|jsx|py|rs|go)$/i.test(file)).slice(0, 300);
+    const sourceFiles = files.filter((file) => /\.(ts|tsx|js|jsx|py|rs|go|swift)$/i.test(file)).slice(0, 300);
 
     const contents: string[] = [];
     for (const file of sourceFiles.slice(0, 80)) {
@@ -61,16 +83,73 @@ export class PatternsAnalyzer implements Analyzer<PatternsData> {
       if (content) contents.push(content.slice(0, 25_000));
     }
 
+    const packageJsonRaw = await readFileSafe(path.join(rootDir, "package.json"));
+    const pkg = packageJsonRaw
+      ? (JSON.parse(packageJsonRaw) as {
+          dependencies?: Record<string, string>;
+          devDependencies?: Record<string, string>;
+          scripts?: Record<string, string>;
+        })
+      : null;
+    const deps = {
+      ...(pkg?.dependencies ?? {}),
+      ...(pkg?.devDependencies ?? {})
+    };
+
+    const requirements = (await readFileSafe(path.join(rootDir, "requirements.txt"))) ?? "";
+    const pyproject = (await readFileSafe(path.join(rootDir, "pyproject.toml"))) ?? "";
+
+    const testDetection = detectTestingFramework(deps, files, [...contents, requirements, pyproject]);
+
+    const lintersFormatters = [
+      [".eslintrc", "ESLint"],
+      [".eslintrc.js", "ESLint"],
+      [".eslintrc.cjs", "ESLint"],
+      [".eslintrc.json", "ESLint"],
+      ["eslint.config.js", "ESLint"],
+      ["eslint.config.mjs", "ESLint"],
+      [".prettierrc", "Prettier"],
+      [".prettierrc.js", "Prettier"],
+      [".prettierrc.json", "Prettier"],
+      ["prettier.config.js", "Prettier"],
+      ["biome.json", "Biome"],
+      ["rustfmt.toml", "rustfmt"],
+      ["swiftlint.yml", "SwiftLint"]
+    ].flatMap(([config, name]) => (files.includes(config) ? [name] : []));
+
+    const ciCd = [
+      [".gitlab-ci.yml", "GitLab CI"],
+      ["Jenkinsfile", "Jenkins"],
+      [".circleci/config.yml", "CircleCI"]
+    ].flatMap(([f, name]) => (files.includes(f) ? [name] : []));
+
+    if (files.some((f) => f.startsWith(".github/workflows/"))) ciCd.push("GitHub Actions");
+
+    const monorepoTooling = [
+      ["lerna.json", "Lerna"],
+      ["nx.json", "Nx"],
+      ["turbo.json", "Turborepo"],
+      ["pnpm-workspace.yaml", "pnpm workspaces"]
+    ].flatMap(([f, name]) => (files.includes(f) ? [name] : []));
+
+    const docker = ["Dockerfile", "docker-compose.yml", "docker-compose.yaml"].filter((f) => files.includes(f));
+
     const data: PatternsData = {
       namingConvention: detectNamingConvention(sourceFiles),
       importStyle: detectImportStyle(contents),
-      errorHandling: detectErrorPatterns(contents)
+      errorHandling: detectErrorPatterns(contents),
+      testingFramework: testDetection.framework,
+      testCommand: pkg?.scripts?.test ? "npm run test" : testDetection.testCommand,
+      lintersFormatters: Array.from(new Set(lintersFormatters)),
+      ciCd: Array.from(new Set(ciCd)),
+      monorepoTooling: Array.from(new Set(monorepoTooling)),
+      docker
     };
 
     return {
       name: this.name,
       data,
-      summary: `Naming: ${data.namingConvention}, imports: ${data.importStyle}, error patterns: ${data.errorHandling.length}`
+      summary: `Naming: ${data.namingConvention}, imports: ${data.importStyle}, tests: ${data.testingFramework ?? "unknown"}`
     };
   }
 }

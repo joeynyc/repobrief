@@ -15,7 +15,10 @@ describe("detectProject", () => {
     const dir = await mkdtemp(path.join(os.tmpdir(), "repobrief-detect-"));
     tempDirs.push(dir);
 
-    await writeFile(path.join(dir, "package.json"), JSON.stringify({ name: "tmp", version: "1.0.0" }));
+    await writeFile(
+      path.join(dir, "package.json"),
+      JSON.stringify({ name: "tmp", version: "1.0.0", dependencies: { next: "14.0.0" } })
+    );
     await writeFile(path.join(dir, "requirements.txt"), "flask==3.0.0\n");
     await writeFile(path.join(dir, "go.mod"), "module example.com/test\n");
 
@@ -24,5 +27,6 @@ describe("detectProject", () => {
     expect(result.languages).toContain("JavaScript/TypeScript");
     expect(result.languages).toContain("Python");
     expect(result.languages).toContain("Go");
+    expect(result.framework).toBe("Next.js");
   });
 });
