@@ -14,6 +14,10 @@
 
 ---
 
+<p align="center">
+  <img src="assets/demo.gif" alt="RepoBrief Demo" width="100%" />
+</p>
+
 ## The Problem
 
 Every time you start an AI coding session — Claude Code, Cursor, Codex, Cline — the agent **re-discovers your project from scratch**. It reads random files, guesses at your architecture, and burns tokens figuring out what you already know.
