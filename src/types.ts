@@ -1,9 +1,3 @@
-export interface FileStatSummary {
-  exists: boolean;
-  size: number;
-  modifiedAt: string | null;
-}
-
 export interface ProjectDetection {
   languages: string[];
   framework: string | null;

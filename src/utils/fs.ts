@@ -1,7 +1,6 @@
-import { stat, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { glob } from "glob";
-import type { FileStatSummary } from "../types.js";
 
 function normalizeIgnorePatterns(patterns: string[]): string[] {
   const base = ["**/.git/**", "**/node_modules/**", "**/dist/**", "**/.repobrief/**"];
@@ -37,22 +36,5 @@ export async function readFileSafe(filePath: string): Promise<string | null> {
     return await readFile(filePath, "utf8");
   } catch {
     return null;
-  }
-}
-
-export async function getFileStats(filePath: string): Promise<FileStatSummary> {
-  try {
-    const fileStat = await stat(filePath);
-    return {
-      exists: true,
-      size: fileStat.size,
-      modifiedAt: fileStat.mtime.toISOString()
-    };
-  } catch {
-    return {
-      exists: false,
-      size: 0,
-      modifiedAt: null
-    };
   }
 }

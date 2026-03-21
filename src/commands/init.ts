@@ -18,41 +18,19 @@ export interface InitResult {
   directoriesAnalyzed: number;
 }
 
-function renderArchitecture(context: RepoBriefContext): string {
-  const { structure } = context;
-  return `# Architecture\n\n- Project type: **${structure.projectType}**\n- Languages: ${structure.detection.languages.join(", ") || "Unknown"}\n- Framework: ${structure.detection.framework ?? "Unknown"}\n- Build system: ${structure.detection.buildSystem ?? "Unknown"}\n\n## Key directories\n${
-    structure.keyDirectories.map((dir) => `- ${dir}`).join("\n") || "- None detected"
-  }\n\n## Entry points\n${structure.entryPoints.map((entry) => `- ${entry}`).join("\n") || "- None detected"}\n`;
-}
-
-function renderDependencies(context: RepoBriefContext): string {
-  return `# Dependencies\n\n## Runtime\n${
-    context.dependencies.runtime.map((dep) => `- ${dep.name}@${dep.version} (${dep.source})`).join("\n") || "- None"
-  }\n\n## Dev\n${context.dependencies.dev.map((dep) => `- ${dep.name}@${dep.version} (${dep.source})`).join("\n") || "- None"}\n`;
-}
-
-function renderPatterns(context: RepoBriefContext): string {
-  return `# Patterns\n\n- Naming convention: **${context.patterns.namingConvention}**\n- Import style: **${context.patterns.importStyle}**\n\n## Error handling\n${
-    context.patterns.errorHandling.map((pattern) => `- ${pattern}`).join("\n") || "- None detected"
-  }\n\n## Development Environment\n- Testing framework: ${context.patterns.testingFramework ?? "Unknown"}\n- Test command: ${context.patterns.testCommand}\n- Linter/formatter: ${context.patterns.lintersFormatters.join(", ") || "None detected"}\n- CI/CD: ${context.patterns.ciCd.join(", ") || "None detected"}\n- Monorepo tooling: ${context.patterns.monorepoTooling.join(", ") || "None detected"}\n- Docker: ${context.patterns.docker.join(", ") || "None detected"}\n`;
-}
-
-function renderHotfiles(context: RepoBriefContext): string {
-  return `# Hot Files\n\n${
-    context.gitHistory.hotFiles.map((file) => `- ${file.path} (${file.commits} commits)`).join("\n") || "- No history available"
-  }\n`;
-}
-
 export async function runInit(rootDir: string, options: InitOptions = {}): Promise<InitResult> {
   const progress = options.onProgress;
-  progress?.("Running structure analyzer...");
-  const structure = await new StructureAnalyzer().analyze(rootDir);
-  progress?.("Running dependencies analyzer...");
-  const dependencies = await new DependenciesAnalyzer().analyze(rootDir);
-  progress?.("Running git history analyzer...");
-  const gitHistory = await new GitHistoryAnalyzer().analyze(rootDir);
-  progress?.("Running patterns analyzer...");
-  const patterns = await new PatternsAnalyzer().analyze(rootDir);
+
+  progress?.("Walking directory tree...");
+  const allFiles = await walkDir(rootDir);
+
+  progress?.("Running analyzers...");
+  const [structure, dependencies, gitHistory, patterns] = await Promise.all([
+    new StructureAnalyzer().analyze(rootDir, allFiles),
+    new DependenciesAnalyzer().analyze(rootDir),
+    new GitHistoryAnalyzer().analyze(rootDir),
+    new PatternsAnalyzer().analyze(rootDir, allFiles)
+  ]);
 
   const context: RepoBriefContext = {
     generatedAt: new Date().toISOString(),
@@ -66,16 +44,9 @@ export async function runInit(rootDir: string, options: InitOptions = {}): Promi
   const repobriefDir = path.join(rootDir, ".repobrief");
   await mkdir(repobriefDir, { recursive: true });
 
-  progress?.("Writing .repobrief output files...");
-  await Promise.all([
-    writeFile(path.join(repobriefDir, "architecture.md"), renderArchitecture(context), "utf8"),
-    writeFile(path.join(repobriefDir, "dependencies.md"), renderDependencies(context), "utf8"),
-    writeFile(path.join(repobriefDir, "patterns.md"), renderPatterns(context), "utf8"),
-    writeFile(path.join(repobriefDir, "hotfiles.md"), renderHotfiles(context), "utf8"),
-    writeFile(path.join(repobriefDir, "context.json"), JSON.stringify(context, null, 2), "utf8")
-  ]);
+  progress?.("Writing .repobrief/context.json...");
+  await writeFile(path.join(repobriefDir, "context.json"), JSON.stringify(context, null, 2), "utf8");
 
-  const allFiles = await walkDir(rootDir);
   const dirSet = new Set(allFiles.map((f) => path.dirname(f)).filter((d) => d !== "."));
 
   return {

@@ -50,13 +50,6 @@ const IMPORTANT_ROOT_FILES = [
   "Dockerfile"
 ];
 
-export function formatProjectOverview(context: RepoBriefContext): string {
-  const type = context.structure.projectType;
-  const framework = context.structure.detection.framework ?? "Unknown framework";
-  const build = context.structure.detection.buildSystem ?? "unknown build system";
-  return `${type} ${framework} project using ${build}`;
-}
-
 function inferProjectType(context: RepoBriefContext): string {
   const entries = context.structure.entryPoints.map((entry) => entry.toLowerCase());
   const deps = new Set(context.dependencies.runtime.map((dep) => dep.name.toLowerCase()));

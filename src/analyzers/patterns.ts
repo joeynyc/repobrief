@@ -70,15 +70,19 @@ function detectTestingFramework(
   return { framework: null, testCommand: "run project tests" };
 }
 
+function detectByFile(files: string[], configs: Array<[string, string]>): string[] {
+  return configs.flatMap(([f, name]) => files.includes(f) ? [name] : []);
+}
+
 export class PatternsAnalyzer implements Analyzer<PatternsData> {
   public readonly name = "patterns";
 
-  async analyze(rootDir: string): Promise<AnalysisResult<PatternsData>> {
-    const files = await walkDir(rootDir, ["**/*.min.js", "**/*.lock"]);
-    const sourceFiles = files.filter((file) => /\.(ts|tsx|js|jsx|py|rs|go|swift)$/i.test(file)).slice(0, 300);
+  async analyze(rootDir: string, prewalkedFiles?: string[]): Promise<AnalysisResult<PatternsData>> {
+    const files = prewalkedFiles ?? await walkDir(rootDir, ["**/*.min.js", "**/*.lock"]);
+    const sourceFiles = files.filter((file) => /\.(ts|tsx|js|jsx|py|rs|go|swift)$/i.test(file)).slice(0, 80);
 
     const contents: string[] = [];
-    for (const file of sourceFiles.slice(0, 80)) {
+    for (const file of sourceFiles) {
       const content = await readFileSafe(path.join(rootDir, file));
       if (content) contents.push(content.slice(0, 25_000));
     }
@@ -101,7 +105,7 @@ export class PatternsAnalyzer implements Analyzer<PatternsData> {
 
     const testDetection = detectTestingFramework(deps, files, [...contents, requirements, pyproject]);
 
-    const lintersFormatters = [
+    const lintersFormatters = detectByFile(files, [
       [".eslintrc", "ESLint"],
       [".eslintrc.js", "ESLint"],
       [".eslintrc.cjs", "ESLint"],
@@ -115,22 +119,22 @@ export class PatternsAnalyzer implements Analyzer<PatternsData> {
       ["biome.json", "Biome"],
       ["rustfmt.toml", "rustfmt"],
       ["swiftlint.yml", "SwiftLint"]
-    ].flatMap(([config, name]) => (files.includes(config) ? [name] : []));
+    ]);
 
-    const ciCd = [
+    const ciCd = detectByFile(files, [
       [".gitlab-ci.yml", "GitLab CI"],
       ["Jenkinsfile", "Jenkins"],
       [".circleci/config.yml", "CircleCI"]
-    ].flatMap(([f, name]) => (files.includes(f) ? [name] : []));
+    ]);
 
     if (files.some((f) => f.startsWith(".github/workflows/"))) ciCd.push("GitHub Actions");
 
-    const monorepoTooling = [
+    const monorepoTooling = detectByFile(files, [
       ["lerna.json", "Lerna"],
       ["nx.json", "Nx"],
       ["turbo.json", "Turborepo"],
       ["pnpm-workspace.yaml", "pnpm workspaces"]
-    ].flatMap(([f, name]) => (files.includes(f) ? [name] : []));
+    ]);
 
     const docker = ["Dockerfile", "docker-compose.yml", "docker-compose.yaml"].filter((f) => files.includes(f));
 

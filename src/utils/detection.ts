@@ -84,6 +84,29 @@ function detectSwiftFramework(content: string): string | null {
   return null;
 }
 
+export const COMMON_ENTRY_POINTS = new Set([
+  "src/index.ts",
+  "src/cli.ts",
+  "src/main.ts",
+  "index.ts",
+  "index.js",
+  "src/index.js",
+  "src/app.ts",
+  "src/app.js",
+  "app.ts",
+  "app.js",
+  "main.swift",
+  "__main__.py",
+  "main.py",
+  "main.go",
+  "src/main.rs",
+  "src/lib.rs",
+  "sources/app/main.swift",
+  "sources/run/main.swift",
+  "sources/main.swift",
+  "cmd/main.go"
+]);
+
 export async function detectProject(rootDir: string): Promise<ProjectDetection> {
   const languages = new Set<string>();
   let framework: string | null = null;

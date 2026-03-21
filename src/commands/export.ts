@@ -6,14 +6,14 @@ import { CursorExporter } from "../exporters/cursor.js";
 import { CodexExporter } from "../exporters/codex.js";
 import { MarkdownExporter } from "../exporters/markdown.js";
 
-function getExporter(format: string): Exporter {
-  const formatToExporter: Record<string, Exporter> = {
-    claude: new ClaudeExporter(),
-    cursor: new CursorExporter(),
-    codex: new CodexExporter(),
-    markdown: new MarkdownExporter()
-  };
+const formatToExporter: Record<string, Exporter> = {
+  claude: new ClaudeExporter(),
+  cursor: new CursorExporter(),
+  codex: new CodexExporter(),
+  markdown: new MarkdownExporter()
+};
 
+function getExporter(format: string): Exporter {
   const exporter = formatToExporter[format];
   if (!exporter) {
     throw new Error(`Unsupported export format: ${format}. Use one of: claude, cursor, codex, markdown.`);
