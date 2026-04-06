@@ -196,7 +196,7 @@ export async function detectProject(rootDir: string): Promise<ProjectDetection> 
       if (await exists(path.join(rootDir, "main.swift"))) {
         entryPoints.add("main.swift");
       }
-      if (/\@main\b/.test(swiftPkg)) {
+      if (/@main\b/.test(swiftPkg)) {
         entryPoints.add("Package.swift (@main)");
       }
     } catch {

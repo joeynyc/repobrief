@@ -1,4 +1,3 @@
-import path from "node:path";
 import type { Analyzer, AnalysisResult, StructureData } from "../types.js";
 import { detectProject, COMMON_ENTRY_POINTS } from "../utils/detection.js";
 import { walkDir } from "../utils/fs.js";

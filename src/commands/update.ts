@@ -42,7 +42,7 @@ export async function runUpdate(
     const raw = await readFile(contextPath, "utf8");
     previous = JSON.parse(raw) as RepoBriefContext;
   } catch {
-    previous = null;
+    // no-op
   }
 
   const result = await runInit(rootDir, options);
