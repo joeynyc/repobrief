@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { access, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
+import { createProgram } from "../../src/cli.js";
 import { runExport } from "../../src/commands/export.js";
 import { runInit } from "../../src/commands/init.js";
 import { runUpdate } from "../../src/commands/update.js";
@@ -110,5 +111,39 @@ describe("command workflows", () => {
 
     await runInit(root);
     await expect(runExport(root, "unknown")).rejects.toThrow("Unsupported export format");
+  });
+
+  it("supports audit CLI JSON output and strict/advisory exit behavior", async () => {
+    const root = await makeTempProject();
+    await runInit(root);
+    await writeFile(path.join(root, "AGENTS.md"), Array.from({ length: 30 }, () => "You must always do this.").join("\n"));
+
+    const originalCwd = process.cwd();
+    const originalExitCode = process.exitCode;
+    const originalLog = console.log;
+    const logs: string[] = [];
+
+    try {
+      process.chdir(root);
+      process.exitCode = undefined;
+      console.log = (message?: unknown) => {
+        logs.push(String(message));
+      };
+
+      await createProgram().parseAsync(["node", "repobrief", "audit", "--json", "--no-write"]);
+      expect(JSON.parse(logs.at(-1) ?? "{}")).toMatchObject({ passed: true });
+      expect(process.exitCode).toBeUndefined();
+
+      logs.length = 0;
+      await createProgram().parseAsync(["node", "repobrief", "audit", "--threshold", "100", "--no-write"]);
+      expect(process.exitCode).toBeUndefined();
+
+      await createProgram().parseAsync(["node", "repobrief", "audit", "--strict", "--threshold", "100", "--no-write"]);
+      expect(process.exitCode).toBe(1);
+    } finally {
+      console.log = originalLog;
+      process.exitCode = originalExitCode;
+      process.chdir(originalCwd);
+    }
   });
 });
