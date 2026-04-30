@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T03:26:27.481Z",
+  "generatedAt": "2026-04-30T04:45:40.568Z",
   "rootDir": "/Users/joeyrodriguez/dev/repobrief",
   "structure": {
     "projectType": "single",
@@ -101,15 +101,27 @@
     "hotFiles": [
       {
         "path": "package.json",
-        "commits": 9
-      },
-      {
-        "path": "package-lock.json",
-        "commits": 6
+        "commits": 10
       },
       {
         "path": ".gitignore",
+        "commits": 7
+      },
+      {
+        "path": "package-lock.json",
+        "commits": 7
+      },
+      {
+        "path": "README.md",
         "commits": 6
+      },
+      {
+        "path": "src/commands/init.ts",
+        "commits": 5
+      },
+      {
+        "path": "src/commands/update.ts",
+        "commits": 5
       },
       {
         "path": "src/analyzers/structure.ts",
@@ -120,15 +132,7 @@
         "commits": 5
       },
       {
-        "path": "README.md",
-        "commits": 5
-      },
-      {
-        "path": "src/commands/update.ts",
-        "commits": 4
-      },
-      {
-        "path": "src/commands/init.ts",
+        "path": "src/cli.ts",
         "commits": 4
       },
       {
@@ -174,13 +178,15 @@
       {
         "path": "tests/exporters/claude.test.ts",
         "commits": 3
-      },
-      {
-        "path": "src/analyzers/git-history.ts",
-        "commits": 3
       }
     ],
     "recentCommits": [
+      {
+        "hash": "b78ddc5d0dca87fbbc47c868eaffc3dc1c68f2a4",
+        "date": "2026-04-30T00:19:05-04:00",
+        "message": "Prepare v0.1.4 reliability release",
+        "author": "Joey"
+      },
       {
         "hash": "dab442d8eb0d3bc6a9fe87319c70a38284802f13",
         "date": "2026-04-06T20:07:18-04:00",
@@ -307,9 +313,14 @@
         "name": "Joey Rodriguez",
         "email": "joeyr1983@gmail.com",
         "commits": 20
+      },
+      {
+        "name": "Joey",
+        "email": "joeynyc@users.noreply.github.com",
+        "commits": 1
       }
     ],
-    "totalCommits": 20
+    "totalCommits": 21
   },
   "patterns": {
     "namingConvention": "kebab-case",

@@ -48,6 +48,10 @@ try {
     await expectFile(path.join(tempDir, ".repobrief", fileName));
   }
 
+  await runCli(["audit"]);
+  await expectFile(path.join(tempDir, ".repobrief", "audit.json"));
+  await expectFile(path.join(tempDir, ".repobrief", "audit.md"));
+
   await runCli(["export", "--format", "codex"]);
   await expectFile(path.join(tempDir, "AGENTS.md"));
 

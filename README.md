@@ -59,6 +59,15 @@ repobrief update
 
 Re-scans your project and updates the context. Fast enough to run on every commit.
 
+## Audit Context Quality
+
+```bash
+repobrief audit
+repobrief audit --strict --threshold 85
+```
+
+`audit` scores generated context from 0-100 for freshness, brevity, evidence, actionability, and validation readiness. By default it is advisory and writes `.repobrief/audit.json` plus `.repobrief/audit.md`; use `--strict` in CI when you want low scores to fail the command.
+
 ## Why RepoBrief?
 
 | Without RepoBrief | With RepoBrief |

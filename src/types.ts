@@ -74,6 +74,29 @@ export interface RepoBriefContext {
   patterns: PatternsData;
 }
 
+export type AuditSeverity = "info" | "warning" | "error";
+
+export type AuditCategory = "freshness" | "brevity" | "evidence" | "actionability" | "validation";
+
+export interface AuditFinding {
+  id: string;
+  severity: AuditSeverity;
+  category: AuditCategory;
+  message: string;
+  recommendation: string;
+  evidence?: string;
+}
+
+export interface AuditResult {
+  generatedAt: string;
+  score: number;
+  grade: "A" | "B" | "C" | "D" | "F";
+  threshold: number;
+  passed: boolean;
+  findings: AuditFinding[];
+  summary: string;
+}
+
 export interface Exporter {
   readonly format: string;
   export(context: RepoBriefContext, outputDir: string): Promise<string>;

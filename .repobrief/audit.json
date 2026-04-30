@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2026-04-30T04:45:40.681Z",
+  "score": 97,
+  "grade": "A",
+  "threshold": 80,
+  "passed": true,
+  "findings": [
+    {
+      "id": "evidence-unknown-framework",
+      "severity": "info",
+      "category": "evidence",
+      "message": "Framework is unknown and should remain clearly marked as unknown.",
+      "recommendation": "Avoid adding framework-specific rules unless detection has evidence.",
+      "evidence": "Framework: Unknown"
+    }
+  ],
+  "summary": "Context scored 97/100 with 0 errors and 0 warnings."
+}
