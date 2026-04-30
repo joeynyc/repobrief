@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { RepoBriefContext } from "../types.js";
 import { runInit, type InitOptions } from "./init.js";
@@ -49,6 +49,5 @@ export async function runUpdate(
   const context = result.context;
   const diff = previous ? summarizeDiff(previous, context) : ["No previous context found; created fresh context."];
 
-  await writeFile(contextPath, JSON.stringify(context, null, 2), "utf8");
   return { context, diff };
 }
