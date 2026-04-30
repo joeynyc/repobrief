@@ -81,6 +81,8 @@ RepoBrief auto-detects your stack:
 
 ## Install
 
+Requires Node.js 20 or newer.
+
 ```bash
 # Run directly (no install needed)
 npx repobrief init
@@ -88,6 +90,15 @@ npx repobrief init
 # Or install globally
 npm install -g repobrief
 ```
+
+## Verify Locally
+
+```bash
+npm run verify
+npm run pack:check
+```
+
+`verify` runs the TypeScript build, ESLint, Vitest, and a smoke test that exercises the packaged CLI entry point against a temporary project.
 
 ## How It Works
 
@@ -101,6 +112,8 @@ npm install -g repobrief
 ## Contributing
 
 RepoBrief is open source under the MIT License. Issues, PRs, and feedback welcome.
+
+Before publishing a release, run the checklist in `RELEASE.md`.
 
 ## License
 

@@ -1,5 +1,6 @@
 *.js
 !eslint.config.js
+!bin/repobrief.js
 node_modules/
 dist/
 .codemap/

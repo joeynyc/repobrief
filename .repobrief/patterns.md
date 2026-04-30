@@ -3,7 +3,12 @@
 - Naming convention: **kebab-case**
 - Import style: **esm**
 
-## Error handling
+## Detection Notes
+- Naming convention is inferred from source file names.
+- Import style is inferred from sampled source contents.
+- Tooling is inferred from package metadata and config files.
+
+## Error Handling
 - Promise.catch
 - console.error logging
 - try/catch

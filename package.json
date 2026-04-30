@@ -1,6 +1,6 @@
 {
   "name": "repobrief",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Universal codebase context engine for AI coding agents",
   "type": "module",
   "bin": {
@@ -11,7 +11,10 @@
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
     "lint": "eslint src/",
-    "prepublishOnly": "npm run build"
+    "smoke": "node scripts/smoke.mjs",
+    "verify": "npm run build && npm run lint && npm run test && npm run smoke",
+    "pack:check": "npm pack --dry-run",
+    "prepublishOnly": "npm run verify && npm run pack:check"
   },
   "keywords": [
     "ai",
@@ -41,7 +44,7 @@
     "vitest": "^4.0.0"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=20.0.0"
   },
   "main": "dist/cli.js",
   "files": [

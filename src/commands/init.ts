@@ -6,6 +6,7 @@ import { GitHistoryAnalyzer } from "../analyzers/git-history.js";
 import { PatternsAnalyzer } from "../analyzers/patterns.js";
 import { walkDir } from "../utils/fs.js";
 import type { RepoBriefContext } from "../types.js";
+import { writeRepoBriefFiles } from "./context-files.js";
 
 export interface InitOptions {
   verbose?: boolean;
@@ -45,7 +46,10 @@ export async function runInit(rootDir: string, options: InitOptions = {}): Promi
   await mkdir(repobriefDir, { recursive: true });
 
   progress?.("Writing .repobrief/context.json...");
-  await writeFile(path.join(repobriefDir, "context.json"), JSON.stringify(context, null, 2), "utf8");
+  await Promise.all([
+    writeFile(path.join(repobriefDir, "context.json"), JSON.stringify(context, null, 2), "utf8"),
+    writeRepoBriefFiles(context, repobriefDir)
+  ]);
 
   const dirSet = new Set(allFiles.map((f) => path.dirname(f)).filter((d) => d !== "."));
 
